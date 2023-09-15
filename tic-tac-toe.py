@@ -25,83 +25,26 @@ def is_board_full(board):
             return False
     return True
 
-def get_empty_cells(board):
-    empty_cells = []
-    for row in range(3):
-        for col in range(3):
-            if board[row][col] == " ":
-                empty_cells.append((row, col))
-    return empty_cells
-
-def minimax(board, depth, is_maximizing):
-    scores = {"X": -1, "O": 1, "Tie": 0}
-    
-    if check_win(board, "O"):
-        return scores["O"]
-    if check_win(board, "X"):
-        return scores["X"]
-    if is_board_full(board):
-        return scores["Tie"]
-
-    if is_maximizing:
-        best_score = float("-inf")
-        for row, col in get_empty_cells(board):
-            board[row][col] = "O"
-            score = minimax(board, depth + 1, False)
-            board[row][col] = " "
-            best_score = max(score, best_score)
-        return best_score
-    else:
-        best_score = float("inf")
-        for row, col in get_empty_cells(board):
-            board[row][col] = "X"
-            score = minimax(board, depth + 1, True)
-            board[row][col] = " "
-            best_score = min(score, best_score)
-        return best_score
-
-def get_best_move(board):
-    best_move = None
-    best_score = float("-inf")
-    for row, col in get_empty_cells(board):
-        board[row][col] = "O"
-        score = minimax(board, 0, False)
-        board[row][col] = " "
-        if score > best_score:
-            best_score = score
-            best_move = (row, col)
-    return best_move
-
 def play_game(player1, player2):
     board = [[" " for _ in range(3)] for _ in range(3)]
     current_player = random.choice([player1, player2])
 
     while True:
         print_board(board)
+        print(f"Player {current_player}'s turn.")
+        row = int(input(f"Enter row (0, 1, 2): "))
+        col = int(input(f"Enter column (0, 1, 2): "))
 
-        if current_player == "X":
-            print(f"Player {current_player}'s turn.")
-            row = int(input(f"Enter row (0, 1, 2): "))
-            col = int(input(f"Enter column (0, 1, 2): "))
-
-            if row < 0 or row > 2 or col < 0 or col > 2 or board[row][col] != " ":
-                print("Invalid move. Try again.")
-                continue
-        else:
-            print(f"Computer {current_player}'s turn.")
-            row, col = get_best_move(board)
-            print(f"Computer chooses row {row}, column {col}")
+        if row < 0 or row > 2 or col < 0 or col > 2 or board[row][col] != " ":
+            print("다시 시도하세요")
+            continue
 
         board[row][col] = current_player
 
         if check_win(board, current_player):
             print_board(board)
-            if current_player == "X":
-                print(f"Player {current_player} wins!")
-                return current_player
-            else:
-                print("Computer wins!")
-                return "O"
+            print(f"Player {current_player} wins!")
+            return current_player
         elif is_board_full(board):
             print_board(board)
             print("It's a tie!")
@@ -121,12 +64,12 @@ def main():
         elif winner == "O":
             player2_wins += 1
 
-        print(f"Score: Player X {player1_wins} - {player2_wins} Computer")
+        print(f"Score: Player X {player1_wins} - {player2_wins} Player O")
 
     if player1_wins >= 2:
         print("Player X wins!")
     elif player2_wins >= 2:
-        print("Computer wins!")
+        print("Player O wins!")
 
 if __name__ == "__main__":
     main()
